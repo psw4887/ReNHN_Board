@@ -31,7 +31,7 @@ public class Like {
     @JoinColumn(name = "post_no")
     private Post post;
 
-    @Column(name = "user_no")
+    @Column(name = "user_no", insertable = false, updatable = false)
     private Integer userNo;
 
     @MapsId

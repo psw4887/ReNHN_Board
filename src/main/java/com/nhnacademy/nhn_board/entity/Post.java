@@ -24,7 +24,7 @@ public class Post {
     @Column(name = "post_no")
     private Integer postNo;
 
-    @Column(name = "user_no")
+    @Column(name = "user_no", insertable = false, updatable = false)
     private Integer userNo;
 
     @MapsId

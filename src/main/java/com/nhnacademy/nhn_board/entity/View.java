@@ -41,7 +41,7 @@ public class View {
         @Column(name = "post_no")
         Integer postNo;
 
-        @Column(name = "user_no")
+        @Column(name = "user_no", insertable = false, updatable = false)
         Integer userNo;
     }
 }
