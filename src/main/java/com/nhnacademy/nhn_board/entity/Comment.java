@@ -23,15 +23,18 @@ public class Comment {
     @JoinColumn(name = "post_no", referencedColumnName = "post_no")
     private Post post;
 
-    @Column(name = "user_no", insertable = false, updatable = false)
-    private Integer userNo;
-
     @MapsId
     @ManyToOne
-    @JoinColumn(name = "user_no")
+    @JoinColumn(name = "user_no", referencedColumnName = "user_no")
     private User user;
 
     @Column(name = "comment_content")
     private String content;
 
+    public Comment(Post post, User user, String content) {
+
+        this.post = post;
+        this.user = user;
+        this.content = content;
+    }
 }

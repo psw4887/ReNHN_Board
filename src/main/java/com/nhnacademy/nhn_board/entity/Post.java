@@ -32,9 +32,18 @@ public class Post {
     @Column(name = "post_write_datetime")
     private LocalDateTime writeDateTime;
 
-    @Column(name = "post_modify_dateTime")
+    @Column(name = "post_modify_datetime")
     private LocalDateTime modifyDateTime;
 
     @Column(name = "post_check_hide")
     private Boolean checkHide;
+
+    public Post(User user, String title, String content, LocalDateTime writeDateTime, LocalDateTime modifyDateTime, boolean checkHide) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.writeDateTime = writeDateTime;
+        this.modifyDateTime = modifyDateTime;
+        this.checkHide = checkHide;
+    }
 }

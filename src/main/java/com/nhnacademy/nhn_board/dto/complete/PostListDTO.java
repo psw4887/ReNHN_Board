@@ -21,5 +21,5 @@ public class PostListDTO {
 
     private Integer commentCount;
 
-    private Integer view;
+    private Integer viewCount;
 }
