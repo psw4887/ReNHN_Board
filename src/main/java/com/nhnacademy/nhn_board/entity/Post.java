@@ -1,14 +1,8 @@
 package com.nhnacademy.nhn_board.entity;
 
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name="Posts")
 public class Post {
 
     @Id
@@ -24,12 +19,8 @@ public class Post {
     @Column(name = "post_no")
     private Integer postNo;
 
-    @Column(name = "user_no", insertable = false, updatable = false)
-    private Integer userNo;
-
-    @MapsId
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "user_no", referencedColumnName = "user_no")
     private User user;
 
     @Column(name = "post_title")

@@ -9,4 +9,9 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository uRepository;
+
+    public boolean successLogin(String id, String pw) {
+
+        return uRepository.existsByUserIdAndUserPw(id, pw);
+    }
 }
