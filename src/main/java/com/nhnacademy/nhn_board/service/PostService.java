@@ -78,6 +78,34 @@ public class PostService {
         return postListDTOS;
     }
 
+    public List<PostListDTO> getPageableSearchPostList(Pageable pageable, String title, HttpServletRequest req) {
+
+        User user = new User();
+        boolean isGuest = true;
+
+        if(Objects.nonNull(req.getSession(false))) {
+            user = uRepository.findByUserId((String) req.getSession(false).getAttribute("id")).orElse(null);
+            isGuest = false;
+        }
+
+        List<ViewPostDTO> viewPostDTOS = pRepository.getPageableSearchList(pageable, title).getContent();
+        List<PostListDTO> postListDTOS = new ArrayList<>();
+
+        for (ViewPostDTO viewPostDTO : viewPostDTOS) {
+            Post post = pRepository.findById(viewPostDTO.getPostNo()).orElse(null);
+            User writer = uRepository.findById(viewPostDTO.getUser().getUserNo()).orElse(null);
+            postListDTOS.add(new PostListDTO(
+                isLike(user, post, isGuest),
+                viewPostDTO.getPostNo(),
+                viewPostDTO.getTitle(),
+                writer.getUserId(),
+                viewPostDTO.getWriteDateTime(),
+                cRepository.countAllByPost(post),
+                vRepository.countAllByPost(post)));
+        }
+        return postListDTOS;
+    }
+
     public ContentDTO getContentByPostNo(Integer postNo) {
 
         PostContentDTO postContentDTO = pRepository.getContent(postNo);

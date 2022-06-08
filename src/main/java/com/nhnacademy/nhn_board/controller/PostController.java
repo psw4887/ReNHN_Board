@@ -133,6 +133,31 @@ public class PostController {
         return "redirect:/board/view?page=0";
     }
 
+    @PostMapping("/search")
+    String searchPost(@RequestParam("title") String title,
+                      @RequestParam("page") Integer page,
+                      HttpServletRequest req,
+                      Model model) {
+
+        if (Objects.isNull(req.getSession(false))) {
+            return "redirect:/board/view?page=0";
+        }
+        User user = uService.findUserById((String) req.getSession(false).getAttribute("id"));
+
+        PageRequest pageRequest = PageRequest.of(page, 20);
+        List<PostListDTO> lists = pService.getPageableSearchPostList(pageRequest, title, req);
+        model.addAttribute("isEnd", 0);
+
+        if(lists.size() < 20) {
+            model.addAttribute("isEnd", 1);
+        }
+        model.addAttribute("page", page);
+        model.addAttribute("searchList", lists);
+        model.addAttribute("user", user);
+
+        return "boardSearch";
+    }
+
     @GetMapping("/recover")
     String readyRecoverPost(@RequestParam("page") Integer page,
                        HttpServletRequest req,
