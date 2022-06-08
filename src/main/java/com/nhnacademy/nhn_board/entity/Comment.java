@@ -18,9 +18,8 @@ public class Comment {
     @Column(name = "comment_no")
     private Integer commentNo;
 
-    @MapsId
     @ManyToOne
-    @JoinColumn(name = "post_no", referencedColumnName = "post_no")
+    @JoinColumn(name = "post_no")
     private Post post;
 
     @MapsId

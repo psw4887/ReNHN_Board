@@ -20,14 +20,35 @@ public class CommentService {
     private final CommentRepository cRepository;
     private final UserRepository uRepository;
 
+    public Comment getComment(Integer commentNo) {
+
+        return cRepository.findById(commentNo).orElse(null);
+    }
+
     @Transactional
     public void registerComment(Integer postNo, String content, HttpServletRequest req) {
 
         Post post = pRepository.findById(postNo).orElse(null);
         User user = uRepository.findByUserId(String.valueOf(req.getSession(false).getAttribute("id"))).orElse(null);
 
-        Comment comment = new Comment(post, user, content);
+        Comment comment = new Comment(post, user , content);
 
         cRepository.save(comment);
+    }
+
+    @Transactional
+    public void modifyComment(Integer commentNo, String content) {
+
+        Comment comment = cRepository.findById(commentNo).orElse(null);
+
+        comment.setContent(content);
+
+        cRepository.save(comment);
+    }
+
+    @Transactional
+    public void deleteComment(Integer commentNo) {
+
+        cRepository.deleteById(commentNo);
     }
 }
