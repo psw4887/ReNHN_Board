@@ -8,7 +8,6 @@ import com.nhnacademy.nhn_board.service.PostService;
 import com.nhnacademy.nhn_board.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

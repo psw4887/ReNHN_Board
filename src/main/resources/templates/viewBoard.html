@@ -25,7 +25,7 @@
       <th>ViewCount</th>
     </tr>
     <tr th:each="board : ${lists}">
-    <form th:action="'/like/check?postNo=' + ${board.postNo} + '&userNo=' + ${user.userNo}" method="post">
+    <form th:action="'/like/check?postNo=' + ${board.postNo} + '&userNo=' + ${user.userNo} + '&page=' + ${page}" method="post">
       <td th:if="${board.isLike}">
         <input type="submit" value="unLike"></span>
       </td>

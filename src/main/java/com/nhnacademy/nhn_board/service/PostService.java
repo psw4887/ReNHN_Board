@@ -185,6 +185,6 @@ public class PostService {
         if (isGuest) {
             return false;
         }
-        return lRepository.existsByUserAndPost(user, post);
+        return lRepository.existsByPostAndUser(post, user);
     }
 }

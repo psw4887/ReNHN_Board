@@ -25,4 +25,10 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "user_no", referencedColumnName = "user_no")
     private User user;
+
+    public Like(Post post, User user) {
+
+        this.post = post;
+        this.user = user;
+    }
 }
