@@ -3,20 +3,21 @@ package com.nhnacademy.nhn_board.controller;
 import com.nhnacademy.nhn_board.entity.Comment;
 import com.nhnacademy.nhn_board.service.CommentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/comment")
 public class CommentController {
 
     private final CommentService service;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register/{postNo}")
     public String commentRegister(@PathVariable("postNo")Integer postNo,
                                   @RequestParam("comment")String comment,

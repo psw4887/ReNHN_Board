@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/board")
 public class PostController {
@@ -24,45 +24,24 @@ public class PostController {
     private final PostService pService;
     private final UserService uService;
 
-    @GetMapping("/view")
-    String goBoard(@RequestParam("page") Integer page,
-                   Model model,
-                   HttpServletRequest req) {
-
-        User user = new User();
-
-        if(Objects.nonNull(req.getSession(false))) {
-            user = uService.findUserById((String) req.getSession(false).getAttribute("id"));
-        }
+    @GetMapping("/view/{page}")
+    List<PostListDTO> getBoards(@PathVariable("page") Integer page,
+                                HttpServletRequest req) {
 
         PageRequest pageRequest = PageRequest.of(page, 20);
-        List<PostListDTO> list = pService.getPageablePostList(pageRequest, req);
-        model.addAttribute("isEnd", 0);
 
-        if(list.size() < 20) {
-            model.addAttribute("isEnd", 1);
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("lists", list);
-        model.addAttribute("user", user);
-
-        return "viewBoard";
+        return pService.getPageablePostList(pageRequest, req);
     }
 
-    @GetMapping("/content")
-    String viewContent(@RequestParam("postNo") int postNo,
-                       HttpServletRequest req,
-                       Model model) {
+    @GetMapping("/content/{postNo}")
+    ContentDTO viewContent(@PathVariable("postNo") int postNo,
+                       HttpServletRequest req) {
 
         if(Objects.nonNull(req.getSession(false))) {
             pService.insertView(postNo, req);
         }
 
-        ContentDTO contentDTO = pService.getContentByPostNo(postNo);
-
-        model.addAttribute("dto", contentDTO);
-
-        return "boardContent";
+        return pService.getContentByPostNo(postNo);
     }
 
     @GetMapping("/register")
@@ -114,77 +93,34 @@ public class PostController {
     }
 
     @PostMapping("/delete/{postNo}")
-    String deletePost(HttpServletRequest req,
+    void deletePost(HttpServletRequest req,
                       @PathVariable("postNo") Integer postNo) {
 
-        String userId = (String)req.getSession(false).getAttribute("id");
-
-        OnlyTitleContentDTO dto = pService.getOnlyTitleContent(postNo);
-
-        if (Objects.isNull(req.getSession(false)) ||(
-                (!userId.equals(dto.getUser().getUserId())) &&
-                (!userId.equals("admin")))) {
-            return "redirect:/board/content?postNo=" + postNo;
-        }
-
         pService.postDelete(postNo);
-
-        return "redirect:/board/view?page=0";
     }
 
-    @PostMapping("/search")
-    String searchPost(@RequestParam("title") String title,
-                      @RequestParam("page") Integer page,
-                      HttpServletRequest req,
-                      Model model) {
-
-        if (Objects.isNull(req.getSession(false))) {
-            return "redirect:/board/view?page=0";
-        }
-        User user = uService.findUserById((String) req.getSession(false).getAttribute("id"));
+    @PostMapping("/search/{title}/{page}")
+    List<PostListDTO> searchPost(@PathVariable("title") String title,
+                      @PathVariable("page") Integer page,
+                      HttpServletRequest req) {
 
         PageRequest pageRequest = PageRequest.of(page, 20);
-        List<PostListDTO> lists = pService.getPageableSearchPostList(pageRequest, title, req);
-        model.addAttribute("isEnd", 0);
 
-        if(lists.size() < 20) {
-            model.addAttribute("isEnd", 1);
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("searchList", lists);
-        model.addAttribute("user", user);
+        return pService.getPageableSearchPostList(pageRequest, title, req);
 
-        return "boardSearch";
     }
 
-    @GetMapping("/recover")
-    String readyRecoverPost(@RequestParam("page") Integer page,
-                       HttpServletRequest req,
-                       Model model) {
-
-        if (Objects.isNull(req.getSession(false)) ||
-                (!((String)(req.getSession(false).getAttribute("id"))).equals("admin"))) {
-            return "redirect:/board/view?page=0";
-        }
+    @GetMapping("/recover/{page}")
+    List<PostListDTO> readyRecoverPost(@PathVariable("page") Integer page) {
 
         PageRequest pageRequest = PageRequest.of(page, 20);
-        List<PostListDTO> lists = pService.getPageableRecoverPostList(pageRequest, req);
-        model.addAttribute("isEnd", 0);
 
-        if(lists.size() < 20) {
-            model.addAttribute("isEnd", 1);
-        }
-        model.addAttribute("page", page);
-        model.addAttribute("recoverList", lists);
-
-        return "boardRecover";
+        return pService.getPageableRecoverPostList(pageRequest);
     }
 
     @PostMapping("/recover/{postNo}")
-    String recoverPost(@PathVariable("postNo") Integer postNo) {
+    void recoverPost(@PathVariable("postNo") Integer postNo) {
 
         pService.postRecover(postNo);
-
-        return "redirect:/board/recover?page=0";
     }
 }

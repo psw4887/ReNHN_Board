@@ -58,7 +58,7 @@ public class PostService {
             return postListDTOS;
     }
 
-    public List<PostListDTO> getPageableRecoverPostList(Pageable pageable, HttpServletRequest req) {
+    public List<PostListDTO> getPageableRecoverPostList(Pageable pageable) {
 
         List<ViewPostDTO> viewPostDTOS = pRepository.getPageableRecoverList(pageable).getContent();
         List<PostListDTO> postListDTOS = new ArrayList<>();
