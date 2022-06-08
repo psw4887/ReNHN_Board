@@ -8,6 +8,7 @@ import com.nhnacademy.nhn_board.dto.complete.PostListDTO;
 import com.nhnacademy.nhn_board.entity.Comment;
 import com.nhnacademy.nhn_board.entity.Post;
 import com.nhnacademy.nhn_board.entity.User;
+import com.nhnacademy.nhn_board.entity.View;
 import com.nhnacademy.nhn_board.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -133,6 +134,22 @@ public class PostService {
         post.setCheckHide(false);
 
         pRepository.save(post);
+    }
+
+    @Transactional
+    public void insertView(Integer postNo, HttpServletRequest req) {
+        User user = uRepository.findByUserId((String)req.getSession(false).getAttribute("id")).orElse(null);
+        Post post = pRepository.findById(postNo).orElse(null);
+
+        View.ViewPK viewPK = new View.ViewPK(postNo, user.getUserNo());
+
+        if(vRepository.existsById(viewPK)) {
+            return;
+        }
+
+        View view = new View(viewPK, post, user);
+
+        vRepository.save(view);
     }
 
     private boolean isLike(User user, Post post, boolean isGuest) {

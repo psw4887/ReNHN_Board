@@ -52,7 +52,12 @@ public class PostController {
 
     @GetMapping("/content")
     String viewContent(@RequestParam("postNo") int postNo,
+                       HttpServletRequest req,
                        Model model) {
+
+        if(Objects.nonNull(req.getSession(false))) {
+            pService.insertView(postNo, req);
+        }
 
         ContentDTO contentDTO = pService.getContentByPostNo(postNo);
 
