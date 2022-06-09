@@ -3,12 +3,14 @@ package com.nhnacademy.nhn_board.controller;
 import com.nhnacademy.nhn_board.dto.OnlyTitleContentDTO;
 import com.nhnacademy.nhn_board.dto.complete.ContentDTO;
 import com.nhnacademy.nhn_board.dto.complete.PostListDTO;
-import com.nhnacademy.nhn_board.entity.User;
+import com.nhnacademy.nhn_board.dto.vo.OnlyTitleContentRequest;
+import com.nhnacademy.nhn_board.dto.vo.PostRegisterRequest;
+import com.nhnacademy.nhn_board.entity.Post;
 import com.nhnacademy.nhn_board.service.PostService;
 import com.nhnacademy.nhn_board.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +24,12 @@ import java.util.Objects;
 public class PostController {
 
     private final PostService pService;
-    private final UserService uService;
+
+    @GetMapping("/{postNo}")
+    Post getPost(@PathVariable("postNo") Integer postNo) {
+
+        return pService.postGet(postNo);
+    }
 
     @GetMapping("/view/{page}")
     List<PostListDTO> getBoards(@PathVariable("page") Integer page,
@@ -53,33 +60,20 @@ public class PostController {
         return "boardRegisterForm";
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    String registerPost(@RequestParam("writeTitle") String title,
-                        @RequestParam("writeContent") String content,
+    void registerPost(@RequestBody PostRegisterRequest post,
                         HttpServletRequest req) {
 
-        pService.postRegister(title, content, req);
-
-        return "redirect:/board/view?page=0";
+        pService.postRegister(post.getUser(), post.getTitle(), post.getContent(), req);
     }
 
     @GetMapping("/modify/{postNo}")
-    String readyModifyPost(HttpServletRequest req,
-                           @PathVariable("postNo") int postNo,
-                           Model model) {
+    OnlyTitleContentRequest readyModifyPost(@PathVariable("postNo") int postNo) {
 
-        OnlyTitleContentDTO dto = pService.getOnlyTitleContent(postNo);
-
-        if (Objects.isNull(req.getSession(false)) ||
-                (!((String)(req.getSession(false).getAttribute("id"))).equals(dto.getUser().getUserId()))) {
-            return "redirect:/board/content?postNo=" + postNo;
-        }
-
-        model.addAttribute("postNo", postNo);
-        model.addAttribute("title", dto.getTitle());
-        model.addAttribute("content", dto.getContent());
-
-        return "boardModifyForm";
+        return new OnlyTitleContentRequest(pService.getOnlyTitleContent(postNo).getUser(),
+            pService.getOnlyTitleContent(postNo).getTitle(),
+            pService.getOnlyTitleContent(postNo).getContent());
     }
 
     @PostMapping("/modify")
@@ -93,8 +87,7 @@ public class PostController {
     }
 
     @PostMapping("/delete/{postNo}")
-    void deletePost(HttpServletRequest req,
-                      @PathVariable("postNo") Integer postNo) {
+    void deletePost(@PathVariable("postNo") Integer postNo) {
 
         pService.postDelete(postNo);
     }

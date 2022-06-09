@@ -31,6 +31,11 @@ public class PostService {
     private final CommentRepository cRepository;
     private final LikeRepository lRepository;
 
+    public Post postGet(Integer postNo) {
+
+        return pRepository.findById(postNo).orElse(null);
+    }
+
     public List<PostListDTO> getPageablePostList(Pageable pageable, HttpServletRequest req) {
 
         User user = new User();
@@ -127,9 +132,8 @@ public class PostService {
     }
 
     @Transactional
-    public void postRegister(String title, String content, HttpServletRequest req) {
+    public void postRegister(User user, String title, String content, HttpServletRequest req) {
 
-        User user = uRepository.findByUserId((String) req.getSession(false).getAttribute("id")).orElse(null);
         Post post = new Post(user, title, content, LocalDateTime.now(), null, false);
 
         pRepository.save(post);
